@@ -1,6 +1,61 @@
 require("dotenv").config();
+const keys = require("./keys.js");
+const axios = require("axios");
+const spotify = require("node-spotify-api");
+const spotify = new Spotify(keys.spotify);
+const moment = require("moment");
+const fs = reuire("fs");
+const bandsInTownID = keys.bandsInTown.id;
+const ombID = keys.omdb.id;
 
-var keys = require("./keys.js");
+
+// Store all of the arguments in an array
+var nodeArgs = process.argv;
+
+// command to run from arguments
+const command = process.argv[2;]
+
+const query = process.argv.slice(3).join("");
+
+
+// const commands = {
+//     "spotify-this-song": new Command(logSpotifySongData),
+//     "movie-this": new Command(logOMDBData),
+//     "concert-this": new Command(logBandsInTownData),
+//     "do-what-it-says": new Command(doWhatItSays)
+// }
+
+
+// USE AXIOS TO LOG MOVIES
+// Create an empty variable for holding the movie name
+var movieName = "";
+
+// Loop through all the words in the node argument
+// And do a little for-loop magic to handle the inclusion of "+"s
+for (var i = 2; i < nodeArgs.length; i++) {
+
+  if (i > 2 && i < nodeArgs.length) {
+    movieName = movieName + "+" + nodeArgs[i];
+  }
+  else {
+    movieName += nodeArgs[i];
+
+  }
+}
+
+// Then run a request with axios to the OMDB API with the movie specified
+var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
+
+// This line is just to help us debug against the actual URL.
+console.log(queryUrl);
+
+axios.get(queryUrl).then(
+  function(response) {
+    console.log("Release Year: " + response.data.Year);
+  }
+);
+
+
 
 // Create all the variables that pull in the node commands
 var command = process.argv[2];
@@ -64,7 +119,6 @@ function movieThis(thing) {
             console.log('Movie Title: ' + JSON.parse(body).Title);
             console.log('Release Year: ' + JSON.parse(body).Year);
             console.log('IMDb Rating: ' + JSON.parse(body).imdbRating);
-            console.log('Country: ' + JSON.parse(body).Country);
             console.log('Language: ' + JSON.parse(body).Language);
             console.log('Plot: ' + JSON.parse(body).Plot);
             console.log('Lead Actors: ' + JSON.parse(body).Actors);
